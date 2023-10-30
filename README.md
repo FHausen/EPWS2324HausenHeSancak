@@ -13,7 +13,7 @@ Hinzu kommt, dass die Möglichkeit, durch Brettspiele als Hobby teil einer grö�
 
 Bei 32,97 Millionen Personen in Deutschland, die ab und zu Gesellschaftsspiele spielen und 5,66 Millionen, die häufig Gesellschaftspiele spielen, sind die Nutzerzahlen der Foren relativ überraschend. (Spielerzahlen: https://de.statista.com/statistik/daten/studie/171127/umfrage/haeufigkeit-des-spielens-von-gesellschaftsspielen-in-der-freizeit/) Es spricht dafür, dass die Foren unzureichend sind, Personen dazu zu bringen an der Community online teilzunehmen. Auch die Zahlen der Meetup-Tools sprechen für Verbesserungsbedarf. ([gesellschaftsspieler-gesucht.de](https://www.gesellschaftsspieler-gesucht.de/) 14,275 Mitglieder, [spielerzentrale.de](https://www.spielerzentrale.de/) 29,876)
 
-## Zielstellung:
+## Zielsetzung:
 
-Die Zielstellung für das Projekt ist demnach, ein System zu entwickeln, dass die Möglichkeit bietet Spieletreffen zu organisieren, indem das Treffen und das Spiel Personen, die vermutlich daran interessiert wären teilzunehmen, vorgeschlagen werden. Dies sollte die Suche nach Mitspielern deutlich verbessern.
+Die Zielsetzung für das Projekt ist demnach, ein System zu entwickeln, dass die Möglichkeit bietet Spieletreffen zu organisieren, indem das Treffen und das Spiel Personen, die vermutlich daran interessiert wären teilzunehmen, vorgeschlagen werden. Dies sollte die Suche nach Mitspielern deutlich verbessern.
 Außerdem soll über das System und dessen sozialen Features eine Community aufgebaut werden, an der alle Brettspielfans regelmäßig teilhaben können.
