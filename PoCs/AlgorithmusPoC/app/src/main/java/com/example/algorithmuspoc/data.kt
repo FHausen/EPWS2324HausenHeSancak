@@ -91,11 +91,11 @@ fun getGameSimilarity(game1: Game, game2: Game):Int{
     var similarity = 0
     var genreSimilarity = 0
 
-    if (abs(game1.age-game2.age)<=2 ) similarity += 1
+    if (abs(game1.age-game2.age)<=3 ) similarity += 1
     if (game1.complexity==game2.complexity) similarity += 1
     game1.genre.forEach {
         if (game2.genre.contains(it)){
-            similarity += 1
+            similarity += 2
             genreSimilarity += 1
         }
     }
@@ -188,8 +188,9 @@ val userList = listOf<User>(
 
 
 
-//Testspiele
+//Testspiele, gameId 0 testet den Fall wenn es zu keiner Empfehlung kommt
 val gameList = listOf<Game>(
+    Game(0,listOf(),0,0,0),
     Game(1,listOf(Genre.Family,Genre.Customizable),10,2,435),
     Game(2,listOf(Genre.Customizable,Genre.Strategy),12,3,235),
     Game(3,listOf(Genre.Children),6,1,32),

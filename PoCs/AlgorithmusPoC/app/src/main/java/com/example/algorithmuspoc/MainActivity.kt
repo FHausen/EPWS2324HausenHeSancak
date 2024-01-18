@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Recommendation() {
 
+    var searchGame by remember { mutableStateOf(Game(0,listOf(),0,0,0),) }
     var searchUser by remember { mutableStateOf(User(0,"", listOf(),0,0, listOf(), listOf())) }
     var search by remember { mutableStateOf("") }
     val similarUsers = mutableListOf<UserSimilarity>()
@@ -83,7 +84,7 @@ fun Recommendation() {
         ) {
             Text(
                 modifier = Modifier
-                    .padding(all = 10.dp),
+                    .padding(all = 8.dp),
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 text = "PoC Algorithmus",
@@ -92,7 +93,7 @@ fun Recommendation() {
             //Eingabefeld für die userID
             TextField(
                 modifier = Modifier
-                    .padding(all = 5.dp),
+                    .padding(all = 3.dp),
                 value = search,
                 onValueChange = { search = it },
                 placeholder = { Text(text = "ID eingeben(1-50)") },
@@ -110,6 +111,7 @@ fun Recommendation() {
                     similarGroups.clear()
                     recommendedGames.clear()
                     recommendedGroups.clear()
+                    searchGame = Game(0,listOf(),0,0,0)
                     searchUser = User(0,"", listOf(),0,0, listOf(), listOf())
 
 
@@ -217,14 +219,110 @@ fun Recommendation() {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray, contentColor = Color.Black)
             ) {
                 Text(
-                    fontSize = 18.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    text = "Empfehlungen vorschlagen"
+                    text = "Empfehlungen für Nutzer vorschlagen"
                 )
             }
 
+
             //Der aktuelle Nutzer
             UserCard(user = searchUser)
+
+
+            //Button für ähnliche Spiele
+            Button(
+                modifier = Modifier
+                    .padding(all = 0.dp),
+                onClick = {
+
+                    //Löschung von vorherigen Empfehlungen
+                    similarUsers.clear()
+                    similarGames.clear()
+                    similarGroups.clear()
+                    recommendedGames.clear()
+                    recommendedGroups.clear()
+                    searchGame = Game(0,listOf(),0,0,0)
+                    searchUser = User(0,"", listOf(),0,0, listOf(), listOf())
+
+
+                    //Im userList wird nach den eingegebenen gameId gesucht
+                    if(search!=""){
+                        for (g in gameList){
+                            if(g.gameId.toString()==search){
+                                searchGame = g
+
+
+                                //In den Datensätzen werden nach ähnlichen Objekten gesucht
+                                gameList.forEach {
+                                    if (getGameSimilarity(g,it) >0){
+                                        similarGames.add(GameSimilarity(it, getGameSimilarity(g,it)))
+                                    }
+                                }
+
+
+
+                                //Die gefundenen Objekte werden nach der höchsten Ähnlichkeit sortiert
+                                similarGames.sortedByDescending { it.similarity }
+                                if(similarGames.size>=15){
+                                    similarGames.subList(15,similarGames.size).clear()
+                                }
+
+
+                                //Die Objekte werden der Empfehlungsliste hinzugefügt
+                                similarGames.forEach{
+                                    if (it.game.gameId!=g.gameId){
+                                        recommendedGames.add(it.game)
+                                    }
+                                }
+
+
+                                //Populäre Spiele werden pro 10 Spiele hinzugefügt, um für Varrianz zu sorgen
+                                if (recommendedGames.size!=0){
+                                    val randomGroup = generateSequence {
+                                        Random.nextInt(0..15)
+                                    }   .distinct()
+                                        .take(recommendedGames.size/10)
+                                        .toSet()
+                                    for (i in randomGroup){
+                                        if (popularGames[i].gameId!=g.gameId){
+                                            recommendedGames.add(popularGames[i])
+                                        }
+                                    }
+                                }
+
+
+                                //Empfehlungsliste wird für Varrianz durchmischt
+                                recommendedGames.shuffle()
+
+
+                                //Falls keine Spiele gefunden wurden, werden populäre Spiele und zufällige Gruppen vorgeschlagen
+                                if (recommendedGames.size==0){
+                                    val randomGroup = generateSequence {
+                                        Random.nextInt(0..15)
+                                    }   .distinct()
+                                        .take(7)
+                                        .toSet()
+                                    for (i in randomGroup){
+                                        recommendedGames.add(popularGames[i])
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray, contentColor = Color.Black)
+            ) {
+                Text(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    text = "Ähnliche Spiele vorschlagen"
+                )
+            }
+
+
+            //Das aktuelle Spiel
+            GameCard(game = searchGame)
 
 
             //Empfohlende Gruppen
@@ -237,7 +335,7 @@ fun Recommendation() {
             )
             LazyColumn(
                 modifier = Modifier
-                    .height(200.dp),
+                    .height(160.dp),
                 content = {
                     items(recommendedGroups){
                             item -> GroupCard(item)
@@ -274,7 +372,7 @@ fun UserCard(user: User) {
     ) {
         Text(
             fontSize = 12.sp,
-            text = "ID: "+user.userId+", Ort: "+user.location+", Alter: "+user.age+", Erfahrung: "+user.experience,
+            text = "NutzerID: "+user.userId+", Ort: "+user.location+", Alter: "+user.age+", Erfahrung: "+user.experience,
         )
         Text(
             fontSize = 12.sp,
@@ -293,7 +391,7 @@ fun GroupCard(group: Group) {
     ) {
         Text(
             fontSize = 12.sp,
-            text = "ID: "+group.groupId+", Ort: "+group.location+", Alter: "+group.age+", Erfahrung: "+group.experience,
+            text = "GruppeID: "+group.groupId+", Ort: "+group.location+", Alter: "+group.age+", Erfahrung: "+group.experience,
         )
         Text(
             fontSize = 12.sp,
@@ -312,7 +410,7 @@ fun GameCard(game: Game) {
     ) {
         Text(
             fontSize = 12.sp,
-            text = "ID: "+game.gameId+", Alter: "+game.age+"+, Komplexität: "+game.complexity+", Aufrufe: "+game.views,
+            text = "SpielID: "+game.gameId+", Alter: "+game.age+"+, Komplexität: "+game.complexity+", Aufrufe: "+game.views,
         )
         Text(
             fontSize = 12.sp,
