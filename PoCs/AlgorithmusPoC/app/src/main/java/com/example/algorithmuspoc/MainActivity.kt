@@ -323,24 +323,3 @@ fun GameCard(game: Game) {
 }
 
 
-
-
-//Priviews
-@Preview(showBackground = true)
-@Composable
-fun UserC() {
-    UserCard(u)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GroupC() {
-    GroupCard(gr)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GameC() {
-    GameCard(ga)
-}
-
