@@ -26,7 +26,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
+//import com.example.entwicklungsprojekt.ui.theme.Blue40
+//import com.example.entwicklungsprojekt.ui.theme.BlueWhite40
 
 @Composable
 fun Start(navController: NavHostController) {
