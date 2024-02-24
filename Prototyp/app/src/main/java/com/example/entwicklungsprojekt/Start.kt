@@ -2,16 +2,25 @@ package com.example.entwicklungsprojekt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -37,33 +46,119 @@ import com.example.entwicklungsprojekt.ui.theme.BlueWhite40
 
 @Composable
 fun Start(navController: NavHostController) {
-    Column(modifier = Modifier.fillMaxSize().background(color = Blue40).padding(horizontal = 50.dp, vertical = 50.dp), horizontalAlignment = Alignment.Start) {
-        Text(text = "Hallo Spieler", color = Color.Black, fontWeight = FontWeight.Light, fontSize = 20.sp, textAlign = TextAlign.Right)
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "Ein neuer Tag eine neue Runde", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 30.sp, textAlign = TextAlign.Start)
+    updateData()
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+        .background(color = Blue40)
+    ) {
+        Column(modifier = Modifier
+            .padding(horizontal = 30.dp, vertical = 5.dp), horizontalAlignment = Alignment.Start)
+        {
+
+            Button(
+                onClick = { navController.navigate("pref") },
+                shape = CutCornerShape(10),
+                modifier = Modifier
+                    .size(width = 170.dp, height = 40.dp)
+                    .align(Alignment.End),
+                colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FavoriteBorder,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
+                Text(
+                    text = "Präferenzen",
+                    style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "Hallo Spieler",
+                color = Color.Black,
+                fontWeight = FontWeight.Light,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Right
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Text(
+                text = "Ein neuer Tag eine neue Runde",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Start
+            )
 ////
-        Spacer(modifier = Modifier.height(50.dp))
-        Box(modifier = Modifier.width(290.dp).height(2.dp).background(color = Color.White))
-        Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Box(modifier = Modifier
+                .height(2.dp)
+                .fillMaxWidth()
+                .background(color = Color.White)
+            )
+
+            Spacer(modifier = Modifier.height(30.dp))
 ////
-        Text(text = "FINDE EINE SPIELERUNDE ", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Start)
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.size(width = 290.dp, height = 200.dp).background(Color.White, shape = RoundedCornerShape(8.dp))) {
-            Column(modifier = Modifier.align(Alignment.TopStart).padding(20.dp)) {
-                Button(onClick = { navController.navigate("findeSpielerunde") }, shape = CutCornerShape(2), modifier = Modifier.size(width = 260.dp, height = 100.dp), colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)) {
-                    Text(text = "FINDE", style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp)) } }
-            Column(modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp)) {
-                Text(text = "Hier finden Sie eine Beschreibung für Ihr Spiel. Weitere Details sind hier verfügbar", style = TextStyle(color = Color.Black)) } }
-        Spacer(modifier = Modifier.height(40.dp))
+            Text(
+                text = "FINDE EIN TREFFEN",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = { navController.navigate("alleTreffen") },
+                shape = CutCornerShape(2),
+                modifier = Modifier
+                    .height(80.dp)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)
+            ) {
+                Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null,tint = Color.Black)
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "TREFFEN FINDEN",
+                    style = TextStyle(color = Color.Black, fontSize = 20.sp))
+            }
+
+
+            Spacer(modifier = Modifier.height(40.dp))
 ////
-        Text(text = "ERSTELLE EINE SPIELERUNDE ", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Start)
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.size(width = 290.dp, height = 200.dp).background(Color.White, shape = RoundedCornerShape(8.dp))) {
-            Column(modifier = Modifier.align(Alignment.TopStart).padding(20.dp)) {
-                Button(onClick = { navController.navigate("erstelleSpielerunde") }, shape = CutCornerShape(2), modifier = Modifier.size(width = 260.dp, height = 100.dp), colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)) {
-                    Text(text = "ERSTELLEN", style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp)) } }
-            Column(modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp)) {
-                Text(text = "Hier finden Sie eine Beschreibung für Ihr Spiel. Weitere Details sind hier verfügbar", style = TextStyle(color = Color.Black)) } }
+            Text(
+                text = "ERSTELLE EIN TREFFEN",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = { navController.navigate("NewMeeting") },
+                shape = CutCornerShape(2),
+                modifier = Modifier
+                    .height(80.dp)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)
+            ) {
+                Icon(imageVector = Icons.Default.AddCircle, contentDescription = null,tint = Color.Black)
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "TREFFEN ERSTELLEN",
+                    style = TextStyle(color = Color.Black, fontSize = 20.sp)
+                )
+            }
+        }
     }
 }
 @Composable
@@ -73,7 +168,12 @@ fun Navigation() {
     NavHost(navController, startDestination = "startScreen") {
         composable("startScreen") { Start(navController = navController) }
         composable("findeSpielerunde") { FindeSpielerunde() }
-        composable("erstelleSpielerunde") { ErstelleSpielerunde() } } }
+        composable("erstelleSpielerunde") { ErstelleSpielerunde() }
+        composable("pref") { UserPref(navController = navController) }
+        composable("newMeeting") { NewMeeting(navController = navController) }
+        composable("alleTreffen") { TreffenSammlung(navController = navController) }
+    }
+}
 
 class NavActions(navController: NavHostController) {
     val navigateToFindeSpielerunde: () -> Unit = { navController.navigate("findeSpielerunde") }

@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.entwicklungsprojekt.ui.theme.Blue40
 import com.example.entwicklungsprojekt.ui.theme.BlueWhite40
-
+/*
 @Composable
 fun Suche() {
 
@@ -105,9 +105,14 @@ fun Suche() {
             Text(text = "TRETE SPIEL BEI", color = Blue40, fontWeight = FontWeight.Bold)}
     }
 }
+ */
 
+
+/*
 @Composable
 @Preview
 fun SuchePreview(){
     Suche()
 }
+
+ */

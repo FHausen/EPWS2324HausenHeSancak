@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.entwicklungsprojekt.ui.theme.Blue40
-
+/*
 @Composable
 fun Runde() {
 
@@ -87,8 +87,14 @@ fun Runde() {
     }
 }
 
+ */
+
+
+/*
 @Composable
 @Preview
 fun RundePreview(){
     Runde()
 }
+
+ */

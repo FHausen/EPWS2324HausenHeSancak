@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "435845280901",
+    "project_id": "tabletoplink-ep2023-24",
+    "storage_bucket": "tabletoplink-ep2023-24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435845280901:android:d027ca8dc6f06b3e94a5ec",
+        "android_client_info": {
+          "package_name": "com.example.entwicklungsprojekt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1qBNPxSUfmq6rn5ZDonJOlVm20jrb0II"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
