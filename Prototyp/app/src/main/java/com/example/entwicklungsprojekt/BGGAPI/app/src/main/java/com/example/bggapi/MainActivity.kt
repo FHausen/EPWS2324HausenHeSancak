@@ -33,10 +33,12 @@ class MainActivity : ComponentActivity() {
         runBlocking {
             val spieleliste = mutableListOf<Spiel>()
             val api = RestAPI()
+           // val queryList = ArrayList<Int>(174430)
             launch(Dispatchers.IO) {
-                val query = 174430
+               // queryList.forEach {
+                    //val query = it
                     val callResponse =
-                        api.getGame("https://bgg-json.azurewebsites.net/thing/$query")
+                        api.getGame("https://bgg-json.azurewebsites.net/thing/174430")
                     val response = callResponse.execute()
 
 
@@ -49,12 +51,13 @@ class MainActivity : ComponentActivity() {
                         spiel.rating = response.body()?.averageRating
                         spieleliste.add(spiel)
                     } else Throwable(response.message())
+                }
 
 
             Log.d("TAG_",spieleliste.toString())
             }
         }
-        }
+  //      }
 
 }
 
