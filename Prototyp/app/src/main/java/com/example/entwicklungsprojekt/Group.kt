@@ -16,9 +16,9 @@ var sfavStrategy = false
 var sfavThematic = false
 var sfavWargame = false
 
-var sjoinedGroups = mutableListOf<String>()
+var joinedMeetingList = mutableListOf<String>()
 
-var gruppenListe = mutableListOf<Group>()
+var meetingListAll = mutableListOf<Meeting>()
 
 fun updateData(){
 
@@ -29,7 +29,7 @@ fun updateData(){
 
     joinedQuery.get()
         .addOnSuccessListener { snapshot ->
-            sjoinedGroups = snapshot.data?.get("groups") as MutableList<String>
+            joinedMeetingList = snapshot.data?.get("groups") as MutableList<String>
         }
         .addOnFailureListener { exeption ->
             println("failed to get joined groups")
@@ -57,7 +57,7 @@ fun updateData(){
     meetingQuery.get()
         .addOnSuccessListener { snapshot ->
             val documentList = snapshot.documents
-            gruppenListe.clear()
+            meetingListAll.clear()
             for (m in documentList){
                 val meetingData = m.data
 
@@ -74,8 +74,8 @@ fun updateData(){
                 val timestamp = meetingData["date"] as Timestamp
                 val date = timestamp.toDate().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime()
 
-                gruppenListe.add(
-                    Group(
+                meetingListAll.add(
+                    Meeting(
                         groupid,
                         titel,
                         stadt,
@@ -91,7 +91,5 @@ fun updateData(){
                 )
             }
         }
-
-
 
 }

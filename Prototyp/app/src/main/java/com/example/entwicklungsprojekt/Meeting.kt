@@ -1,6 +1,5 @@
 package com.example.entwicklungsprojekt
 
-import android.view.RoundedCorner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -23,21 +21,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,23 +35,16 @@ import androidx.navigation.NavController
 import com.example.entwicklungsprojekt.ui.theme.Blue40
 import com.example.entwicklungsprojekt.ui.theme.BlueWhite40
 import com.google.firebase.firestore.FirebaseFirestore
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
-import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.time.timepicker
-import java.time.LocalDate
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 
 @Composable
-fun TreffenCard(
-    group: Group,
+fun MeetingCard(
+    meeting: Meeting,
     navController: NavController
 ) {
-
     var genreAll = ""
-    group.genre.forEachIndexed{index,b ->
+    meeting.genre.forEachIndexed{ index, b ->
         if (index==0&&b)genreAll += "Abstract, "
         if (index==1&&b)genreAll += "Children, "
         if (index==2&&b)genreAll += "Customizable, "
@@ -76,14 +58,14 @@ fun TreffenCard(
 
     Box(
         modifier = Modifier
-        .fillMaxSize()
-        .padding(10.dp)
-        .clickable { navController.navigate(NavScreen.TreffenEinzel.withArg(group.groupId)) }
-        .shadow(
-            elevation = 10.dp,
-            shape = RoundedCornerShape(14.dp)
-        )
-        .background(Color.White)
+            .fillMaxSize()
+            .padding(10.dp)
+            .clickable { navController.navigate(NavScreen.SingleMeeting.withArg(meeting.groupId)) }
+            .shadow(
+                elevation = 10.dp,
+                shape = RoundedCornerShape(14.dp)
+            )
+            .background(Color.White)
 
     ) {
         Column(
@@ -94,19 +76,19 @@ fun TreffenCard(
             Text(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                text = "Titel: "+group.titel,
+                text = "Titel: "+meeting.titel,
             )
             Text(
                 fontSize = 12.sp,
-                text = "Ort: "+group.stadt+", Datum: "+group.date.dayOfMonth+"."+group.date.monthValue+"."+group.date.year+"  "+group.date.hour+":"+group.date.minute,
+                text = "Beschreibung: "+meeting.beschreibung,
             )
             Text(
                 fontSize = 12.sp,
-                text = "Alter: "+group.alter1+" bis "+group.alter2+", Erfahrung: "+group.erfahrung,
+                text = "Ort: "+meeting.stadt+", Datum: "+meeting.date.dayOfMonth+"."+meeting.date.monthValue+"."+meeting.date.year+"  "+meeting.date.hour+":"+meeting.date.minute,
             )
             Text(
-                    fontSize = 12.sp,
-            text = "Beschreibung: "+group.beschreibung,
+                fontSize = 12.sp,
+                text = "Alter: "+meeting.alter1+" bis "+meeting.alter2+", Erfahrung: "+meeting.erfahrung,
             )
             Text(
                 fontSize = 12.sp,
@@ -114,25 +96,41 @@ fun TreffenCard(
             )
             Text(
                 fontSize = 12.sp,
-                text = "Spiele: "+group.spiele,
+                text = "Spiele: "+meeting.spiele,
             )
-            if (group.prototyp){
+            if (meeting.prototyp){
                 Text(
                     fontSize = 12.sp,
                     text = "Prototyp",
                 )
             }
-
+            Spacer(modifier = Modifier.height(10.dp))
+            joinedMeetingList.forEach { id ->
+                if (id==meeting.groupId) {
+                    Text(
+                        textAlign = TextAlign.End,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        text = "Treffen beigetreten",
+                    )
+                }
+            }
         }
     }
-
 }
 
 @Composable
-fun TreffenSammlung(
+fun AllMeeting(
     navController: NavController
 ){
-    updateData()
+    var filteredList = mutableListOf<Meeting>()
+    meetingListAll.forEach { id ->
+        if (id.date.isAfter(LocalDateTime.now())) {
+            filteredList.add(id)
+        }
+    }
+    filteredList.sortBy { it.date }
+
 
     Box(
         modifier = Modifier
@@ -147,7 +145,7 @@ fun TreffenSammlung(
         ) {
 
             Text(
-                text = "Finde ein Treffen",
+                text = "Alle Treffen",
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 36.sp,
@@ -169,8 +167,8 @@ fun TreffenSammlung(
                 .padding(bottom = 70.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             content = {
-                items(gruppenListe){
-                        item -> TreffenCard(item,navController = navController)
+                items(filteredList){
+                        item -> MeetingCard(item,navController = navController)
                 }
             }
         )
@@ -187,6 +185,7 @@ fun TreffenSammlung(
             content = { Text(text = "HAUPTMENÜ", color = Color.DarkGray) },
             enabled = true,
             onClick = {
+                updateData()
                 navController.navigate("startScreen")
             }
         )
@@ -194,18 +193,19 @@ fun TreffenSammlung(
 }
 
 @Composable
-fun TreffenBeigetreten(
+fun JoinedMeeting(
     navController: NavController
 ){
-    updateData()
-
-    var joinedGroupList = mutableListOf<Group>()
-    sjoinedGroups.forEach { id ->
-        val n = gruppenListe.find { group -> group.groupId == id }
+    var filteredList = mutableListOf<Meeting>()
+    joinedMeetingList.forEach { id ->
+        val n = meetingListAll.find { group -> group.groupId == id }
         if (n != null) {
-            joinedGroupList.add(n)
+            if (n.date.isAfter(LocalDateTime.now())) {
+                filteredList.add(n)
+            }
         }
     }
+    filteredList.sortBy { it.date }
 
     Box(
         modifier = Modifier
@@ -220,7 +220,7 @@ fun TreffenBeigetreten(
         ) {
 
             Text(
-                text = "Beigetretene Treffen",
+                text = "Beigetreten",
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 36.sp,
@@ -242,8 +242,8 @@ fun TreffenBeigetreten(
                 .padding(bottom = 70.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             content = {
-                items(joinedGroupList){
-                        item -> TreffenCard(item,navController = navController)
+                items(filteredList){
+                        item -> MeetingCard(item,navController = navController)
                 }
             }
         )
@@ -260,6 +260,7 @@ fun TreffenBeigetreten(
             content = { Text(text = "HAUPTMENÜ", color = Color.DarkGray) },
             enabled = true,
             onClick = {
+                updateData()
                 navController.navigate("startScreen")
             }
         )
@@ -268,15 +269,15 @@ fun TreffenBeigetreten(
 
 
 @Composable
-fun TreffenEinzel(
+fun SingleMeeting(
     navController: NavController,
-    treffenIndex: String
+    meetingIndex: String
 ){
     val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     val joined = db.collection("user").document("prototype").collection("groups").document("joined")
 
 
-    var current = gruppenListe.find { g -> g.groupId == treffenIndex }
+    var current = meetingListAll.find { g -> g.groupId == meetingIndex }
 
     if (current!=null) {
 
@@ -308,15 +309,31 @@ fun TreffenEinzel(
             ) {
 
 
-                Text(
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(start = 10.dp)
                         .padding(top = 15.dp)
-                        .padding(bottom = 5.dp),
-                    text = "Titel",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                )
+                        .padding(bottom = 5.dp)
+                ) {
+                    Text(
+                        text = "Titel",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    joinedMeetingList.forEach { id ->
+                        if (id==current.groupId) {
+                            Text(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                text = "Beigetreten",
+                            )
+                        }
+                    }
+                }
+
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -325,6 +342,26 @@ fun TreffenEinzel(
                     text = current.titel,
                     fontSize = 16.sp,
                 )
+
+
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .padding(top = 15.dp)
+                        .padding(bottom = 5.dp),
+                    text = "Beschreibung",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .padding(top = 15.dp)
+                        .padding(bottom = 5.dp),
+                    text = current.beschreibung,
+                    fontSize = 16.sp,
+                )
+
 
                 Text(
                     modifier = Modifier
@@ -344,7 +381,23 @@ fun TreffenEinzel(
                     fontSize = 16.sp,
                 )
 
-
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .padding(top = 15.dp)
+                        .padding(bottom = 5.dp),
+                    text = "Datum und Uhrzeit",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .padding(top = 15.dp)
+                        .padding(bottom = 5.dp),
+                    text = current.date.dayOfMonth.toString() + "." + current.date.monthValue + "." + current.date.year + "  " + current.date.hour + ":" + current.date.minute,
+                    fontSize = 16.sp,
+                )
 
                 Text(
                     modifier = Modifier
@@ -415,7 +468,6 @@ fun TreffenEinzel(
                 }
 
 
-
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -434,48 +486,11 @@ fun TreffenEinzel(
                     fontSize = 16.sp,
                 )
 
-
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .padding(top = 15.dp)
-                        .padding(bottom = 5.dp),
-                    text = "Datum und Uhrzeit",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .padding(top = 15.dp)
-                        .padding(bottom = 5.dp),
-                    text = current.date.dayOfMonth.toString() + "." + current.date.monthValue + "." + current.date.year + "  " + current.date.hour + ":" + current.date.minute,
-                    fontSize = 16.sp,
-                )
-
-
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .padding(top = 15.dp)
-                        .padding(bottom = 5.dp),
-                    text = "Beschreibung",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .padding(top = 15.dp)
-                        .padding(bottom = 5.dp),
-                    text = current.beschreibung,
-                    fontSize = 16.sp,
-                )
                 Spacer(modifier = Modifier.height(76.dp))
             }
 
 
-            if (sjoinedGroups.contains(current.groupId)) {
+            if (joinedMeetingList.contains(current.groupId)) {
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -488,7 +503,6 @@ fun TreffenEinzel(
                     enabled = true,
                     onClick = {
                         navController.navigateUp()
-                        //navController.navigate("alleTreffen")
                     }
                 )
             }else{
@@ -504,7 +518,7 @@ fun TreffenEinzel(
                     enabled = true,
                     onClick = {
 
-                        val newJoinedGroups = sjoinedGroups
+                        val newJoinedGroups = joinedMeetingList
                         newJoinedGroups.add(current.groupId)
                         val newDocument = hashMapOf(
                             "groups" to newJoinedGroups
@@ -517,6 +531,7 @@ fun TreffenEinzel(
                             .addOnFailureListener { exception ->
                                 println("failed to create meeting")
                             }
+                        updateData()
                         navController.navigateUp()
                     }
                 )
@@ -541,6 +556,7 @@ fun TreffenEinzel(
             content = { Text(text = "ZURÜCK ZUM HAUPTMENÜ", color = Color.DarkGray) },
             enabled = true,
             onClick = {
+                updateData()
                 navController.navigate("startScreen")
             }
         )
@@ -548,20 +564,22 @@ fun TreffenEinzel(
 }
 
 @Composable
-fun TreffenVorschlag(
+fun RecommendedMeeting(
     navController: NavController
 ){
-    updateData()
-    var matchedGroupList = mutableListOf<GroupFitting>()
+    var matchedList = mutableListOf<MeetingFit>()
     val favGenre = listOf(sfavAbstract,sfavChildren,sfavCustomizable,sfavFamily,sfavParty,sfavStrategy,sfavThematic,sfavWargame)
 
 
-    gruppenListe.forEach { id ->
-        if (getFittingGroup(id, sstadt, salter, serfahrung,favGenre)>0){
-            matchedGroupList.add(GroupFitting(id,getFittingGroup(id, sstadt, salter, serfahrung,favGenre)))
+    meetingListAll.forEach { id ->
+        if (id.date.isAfter(LocalDateTime.now())) {
+            if (getFittingGroup(id, sstadt, salter, serfahrung,favGenre)>0){
+                matchedList.add(MeetingFit(id,getFittingGroup(id, sstadt, salter, serfahrung,favGenre)))
+            }
         }
     }
-    matchedGroupList.sortedByDescending { it.similarity }
+    matchedList.sortByDescending { it.similarity }
+    matchedList.forEach { i -> println(i.similarity) }
 
 
     Box(
@@ -577,7 +595,7 @@ fun TreffenVorschlag(
         ) {
 
             Text(
-                text = "Beigetretene Treffen",
+                text = "Empfehlungen",
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 36.sp,
@@ -599,8 +617,8 @@ fun TreffenVorschlag(
                 .padding(bottom = 70.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             content = {
-                items(matchedGroupList){
-                        item -> TreffenCard(item.group,navController = navController)
+                items(matchedList){
+                        item -> MeetingCard(item.meeting,navController = navController)
                 }
             }
         )
@@ -617,6 +635,7 @@ fun TreffenVorschlag(
             content = { Text(text = "HAUPTMENÜ", color = Color.DarkGray) },
             enabled = true,
             onClick = {
+                updateData()
                 navController.navigate("startScreen")
             }
         )
@@ -625,17 +644,18 @@ fun TreffenVorschlag(
 
 
 @Composable
-fun TreffenPrototyp(
+fun PrototypeMeeting(
     navController: NavController
-){
-    updateData()
-    var prototypeList = mutableListOf<Group>()
-
-    gruppenListe.forEach { id ->
+) {
+    var filteredList = mutableListOf<Meeting>()
+    meetingListAll.forEach { id ->
         if (id.prototyp) {
-            prototypeList.add(id)
+            if (id.date.isAfter(LocalDateTime.now())) {
+                filteredList.add(id)
+            }
         }
     }
+    filteredList.sortBy { it.date }
 
     Box(
         modifier = Modifier
@@ -650,7 +670,7 @@ fun TreffenPrototyp(
         ) {
 
             Text(
-                text = "Beigetretene Treffen",
+                text = "Prototypen",
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 36.sp,
@@ -673,8 +693,8 @@ fun TreffenPrototyp(
                 .padding(bottom = 70.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             content = {
-                items(prototypeList) { item ->
-                    TreffenCard(item, navController = navController)
+                items(filteredList) { item ->
+                    MeetingCard(item, navController = navController)
                 }
             }
         )
@@ -691,28 +711,9 @@ fun TreffenPrototyp(
             content = { Text(text = "HAUPTMENÜ", color = Color.DarkGray) },
             enabled = true,
             onClick = {
+                updateData()
                 navController.navigate("startScreen")
             }
         )
     }
 }
-
-
-
-/*
-item{
-    Text(
-        text = "Für dich personalisiert",
-        color = Color.Black,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
-        textAlign = TextAlign.Start
-    )
-}
-
-items(gruppenListe){
-    item -> TreffenCard(item,navController = navController)
-
-}
-
- */

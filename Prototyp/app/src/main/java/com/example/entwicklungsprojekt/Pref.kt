@@ -39,12 +39,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.ZoneOffset
 
+
+
 fun checkPrefInput(alter:String,erfahrung:String):Boolean{
     return if (alter.all { char -> char.isDigit()}&&erfahrung.all { char -> char.isDigit()}&&alter!=""&&erfahrung!=""){
         erfahrung.toIntOrNull() in 1..5&&alter.toIntOrNull()!! > 0
     }else false
 }
-
 
 
 @Composable
@@ -358,10 +359,4 @@ fun UserPref(
             }
         )
     }
-}
-
-@Composable
-@Preview
-fun PrefPreview(){
-    UserPref(navController = rememberNavController())
 }
