@@ -56,13 +56,24 @@ fun Start(
             Column(modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(20.dp)) {
-                Button(onClick = { navController.navigate("findeeinTreffen") }, shape = CutCornerShape(2), modifier = Modifier.size(width = 260.dp, height = 110.dp), colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)) {
-                    Text(text = "FINDE", style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp)) } }
+                Button(
+                    onClick = { navController.navigate("findeeinTreffen") },
+                    shape = CutCornerShape(2),
+                    modifier = Modifier.size(width = 260.dp, height = 120.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)
+                ) {
+                    Icon(Icons.Default.Search, contentDescription = "Suche Icon", modifier = Modifier.size(140.dp))
+                }
+            }
             Column(modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(20.dp)) {
-                Text(text = "FINDE EINE TREFFEN", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            } }
+                Text(text = "FINDE EINE TREFFEN", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            }
+        }
+
+
+
 
         Spacer(modifier = Modifier.height(70.dp))
         Box(modifier = Modifier
@@ -71,13 +82,21 @@ fun Start(
             Column(modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(20.dp)) {
-                Button(onClick = { navController.navigate("erstelleeinTreffen") }, shape = CutCornerShape(2), modifier = Modifier.size(width = 260.dp, height = 110.dp), colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)) {
-                    Text(text = "ERSTELLEN", style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp)) } }
+                Button(
+                    onClick = { navController.navigate("erstelleeinTreffen") },
+                    shape = CutCornerShape(2),
+                    modifier = Modifier.size(width = 260.dp, height = 120.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BlueWhite40)
+                ) {
+                    Icon(Icons.Default.Person, contentDescription = "Person Icon", modifier = Modifier.size(140.dp))
+                }
+            }
             Column(modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(20.dp)) {
-                Text(text = "ERSTELLE EIN TREFFEN", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            } }
+                Text(text = "ERSTELLE EINE TREFFEN", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            }
+        }
     }
 }
 
