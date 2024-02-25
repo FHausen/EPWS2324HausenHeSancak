@@ -123,89 +123,112 @@ fun FindeTreffen(navController: NavController, navigateToSpielTreffen: () -> Uni
         "Umkreis 15 km",
         "Umkreis 20 km",
         "Umkreis 25 km",
-        "Umkreis 30 km",
+        "Umkreis 30 km"
+    )
 
-        )
+    var plz by remember { mutableStateOf(TextFieldValue()) }
+    val suggestions = listOf(
+        "50674",
+        "53173",
+        "51645",
+        "40217",
+        "45141",
+        "42113")
 
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(color = Blue40)
-            .padding(50.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = Blue40),
     ) {
-        Text(text = "Finde ein Treffen", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 30.sp, textAlign = TextAlign.Start)
-        Spacer(modifier = Modifier.height(50.dp))
-        Box(modifier = Modifier.width(290.dp).height(2.dp).background(color = Color.White))
-
-        Spacer(modifier = Modifier.height(50.dp))
-        ExposedDropDownMenu(options = kategorieList, defaultText = "Bitte Kategorie wählen")
-        Spacer(modifier = Modifier.height(50.dp))
-        ExposedDropDownMenu(options = spieleList, defaultText = "Bitte Spiel wählen")
-        Spacer(modifier = Modifier.height(50.dp))
-        ExposedDropDownMenu(options = stadtList, defaultText = "Bitte Stadt wählen")
-        Spacer(modifier = Modifier.height(50.dp))
-
-        var plz by remember { mutableStateOf("") }
-
-        Box(
+        Column(
             modifier = Modifier
-                .size(290.dp, 50.dp)
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .clickable(onClick = { })
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 50.dp, vertical = 50.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+            Text(
+                text = "Finde ein Treffen",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+            Box(modifier = Modifier.width(290.dp).height(2.dp).background(color = Color.White))
+
+            Spacer(modifier = Modifier.height(50.dp))
+            ExposedDropDownMenu(options = kategorieList, defaultText = "Bitte Kategorie wählen")
+            Spacer(modifier = Modifier.height(50.dp))
+            ExposedDropDownMenu(options = spieleList, defaultText = "Bitte Spiel wählen")
+            Spacer(modifier = Modifier.height(50.dp))
+            ExposedDropDownMenu(options = stadtList, defaultText = "Bitte Stadt wählen")
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(290.dp)
+                    .height(50.dp)
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
             ) {
                 BasicTextField(
                     value = plz,
-                    onValueChange = { plz = it },
+                    onValueChange = { newValue ->
+                        plz = newValue
+                    },
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(15.dp)
-                        .background(Color.Transparent),
+                        .fillMaxSize()
+                        .padding(15.dp),
                     textStyle = TextStyle(color = Color.Black),
                     decorationBox = { innerTextField ->
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             innerTextField()
-                            if (plz.isEmpty()) {
+                            if (plz.text.isEmpty()) {
                                 Text(
-                                    text = "Bitte Stadt eingeben",
+                                    text = "Bitte PLZ eingeben",
                                     color = Color.Black.copy(alpha = 1f),
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Start,
                                     style = TextStyle(fontSize = 14.sp)
-
                                 )
+                            } else {
+                                suggestions.forEach { suggestion ->
+                                    if (suggestion.startsWith(plz.text, ignoreCase = true)) {
+                                        Text(
+                                            text = suggestion,
+                                            color = Color.Gray,
+                                            textAlign = TextAlign.Start,
+                                            style = TextStyle(fontSize = 14.sp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 )
             }
-        }
-        Spacer(modifier = Modifier.height(50.dp))
-        ExposedDropDownMenu(options = umkreisList, defaultText = "Umkreis 5 km")
 
-        Spacer(modifier = Modifier.height(100.dp))
-        Button(
-            onClick = { navController.navigate("spieleTreffen")},
-            modifier = Modifier.size(290.dp, 50.dp),
-            colors = ButtonDefaults.buttonColors(Color.White)
-        ) {
-            Text(
-                text = "WEITER",
-                color = Blue40,
-                fontWeight = FontWeight.Bold
-            )
+            Spacer(modifier = Modifier.height(50.dp))
+            ExposedDropDownMenu(options = umkreisList, defaultText = "Umkreis 5 km")
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Button(
+                onClick = { navController.navigate("spieleTreffen") },
+                modifier = Modifier.size(290.dp, 50.dp),
+                colors = ButtonDefaults.buttonColors(Color.White)
+            ) {
+                Text(
+                    text = "WEITER",
+                    color = Blue40,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
-
 @Composable
 @Preview
 fun FindeTreffenPreview() {
