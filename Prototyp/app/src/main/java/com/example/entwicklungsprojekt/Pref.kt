@@ -34,6 +34,9 @@ import com.example.entwicklungsprojekt.ui.theme.Blue40
 import com.example.entwicklungsprojekt.ui.theme.BlueWhite40
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.ZoneOffset
 
 fun checkPrefInput(alter:String,erfahrung:String):Boolean{
@@ -42,83 +45,7 @@ fun checkPrefInput(alter:String,erfahrung:String):Boolean{
     }else false
 }
 
-var sstadt = ""
-var salter = ""
-var serfahrung = ""
-var sfavAbstract = false
-var sfavChildren = false
-var sfavCustomizable = false
-var sfavFamily = false
-var sfavParty = false
-var sfavStrategy = false
-var sfavThematic = false
-var sfavWargame = false
 
-var gruppenListe = mutableListOf<Group>()
-
-fun updateData(){
-    val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    val savedprefQuery = db.collection("user").document("prototype").collection("pref").document("savedpref")
-    val meetingQuery = db.collection("meeting")
-
-    savedprefQuery.get()
-        .addOnSuccessListener { snapshot ->
-            sstadt = snapshot.data?.get("stadt") as String
-            salter = snapshot.data?.get("alter") as String
-            serfahrung = snapshot.data?.get("erfahrung") as String
-            val favGenre = snapshot.data?.get("favGenre") as List<Boolean>
-            sfavAbstract = favGenre[0]
-            sfavChildren = favGenre[1]
-            sfavCustomizable = favGenre[2]
-            sfavFamily = favGenre[3]
-            sfavParty = favGenre[4]
-            sfavStrategy = favGenre[5]
-            sfavThematic = favGenre[6]
-            sfavWargame = favGenre[7]
-        }
-        .addOnFailureListener { exeption ->
-            println("failed to get preference")
-        }
-
-    meetingQuery.get()
-        .addOnSuccessListener { snapshot ->
-            val documentList = snapshot.documents
-            gruppenListe.clear()
-            for (m in documentList){
-                val meetingData = m.data
-
-                val groupid = m.id
-                val titel = meetingData?.get("titel") as String
-                val stadt = meetingData["stadt"] as String
-                val alter1 = meetingData["alter1"] as String
-                val alter2 = meetingData["alter2"] as String
-                val erfahrung = meetingData["erfahrung"] as String
-                val spiele = meetingData["spiele"] as String
-                val prototyp = meetingData["prototyp"] as Boolean
-                val genre = meetingData["genre"] as List<Boolean>
-                val beschreibung = meetingData["beschreibung"] as String
-                val timestamp = meetingData["date"] as Timestamp
-                val date = timestamp.toDate().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime()
-
-                gruppenListe.add(
-                    Group(
-                        groupid,
-                        titel,
-                        stadt,
-                        genre,
-                        alter1,
-                        alter2,
-                        erfahrung,
-                        spiele,
-                        prototyp,
-                        beschreibung,
-                        date
-                    )
-                )
-            }
-        }
-
-}
 
 @Composable
 fun UserPref(
@@ -425,7 +352,7 @@ fun UserPref(
                             println("failed to save preference")
                         }
 
-                //updateCardList()
+                updateData()
                 navController.popBackStack()
                 navController.navigate("startScreen")
             }

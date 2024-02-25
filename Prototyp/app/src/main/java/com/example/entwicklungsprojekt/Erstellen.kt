@@ -168,15 +168,14 @@ fun Erstellen( ) {
  */
 
 
-fun checkMeetingInput(alter1:String,alter2:String,erfahrung:String):Boolean{
+fun checkMeetingInput(alter1:String,alter2:String,erfahrung:String,titel:String,stadt:String,spiele:String,beschreibung:String):Boolean{
     return if (alter1.all { char -> char.isDigit()}&&alter2.all { char -> char.isDigit()}&&erfahrung.all { char -> char.isDigit()}&&alter1!=""&&alter2!=""&&erfahrung!=""){
-        erfahrung.toIntOrNull() in 1..5&&alter1.toIntOrNull()!! > 0&&alter2.toIntOrNull()!! > 0
+        erfahrung.toIntOrNull() in 1..5&&alter1.toIntOrNull()!! > 0&&alter2.toIntOrNull()!! > 0&&titel!=""&&stadt!=""&&spiele!=""&&beschreibung!=""
     }else false
 }
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewMeeting(
     navController: NavController
@@ -270,7 +269,10 @@ fun NewMeeting(
                     .fillMaxWidth()
                     .height(60.dp),
                 value = titel,
-                onValueChange = { titel = it },
+                onValueChange = {
+                    titel = it
+                    okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
+                                },
                 placeholder = { Text(text = "Titel eingeben") },
             )
 
@@ -288,7 +290,10 @@ fun NewMeeting(
                     .fillMaxWidth()
                     .height(60.dp),
                 value = stadt,
-                onValueChange = { stadt = it },
+                onValueChange = {
+                    stadt = it
+                    okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
+                                },
                 placeholder = { Text(text = "Stadt eingeben") },
             )
 
@@ -314,8 +319,8 @@ fun NewMeeting(
                     value = alter1,
                     onValueChange = {
                         alter1 = it
-                        okInput = checkMeetingInput(alter1, alter2, erfahrung)
-                    },
+                        okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
+                                    },
                     placeholder = { Text(text = "Alter 1") },
                 )
 
@@ -335,7 +340,7 @@ fun NewMeeting(
                     value = alter2,
                     onValueChange = {
                         alter2 = it
-                        okInput = checkMeetingInput(alter1, alter2, erfahrung)
+                        okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
                     },
                     placeholder = { Text(text = "Alter 2") },
                 )
@@ -358,7 +363,7 @@ fun NewMeeting(
                 value = erfahrung,
                 onValueChange = {
                     erfahrung = it
-                    okInput = checkMeetingInput(alter1, alter2, erfahrung)
+                    okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
                 },
                 placeholder = { Text(text = "Erfahrung eingeben (1 - 5)") },
             )
@@ -377,7 +382,10 @@ fun NewMeeting(
                     .fillMaxWidth()
                     .height(60.dp),
                 value = spiele,
-                onValueChange = { spiele = it },
+                onValueChange = {
+                    spiele = it
+                    okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
+                                },
                 placeholder = { Text(text = "Spiele eingeben") },
             )
 
@@ -519,7 +527,7 @@ fun NewMeeting(
                         .align(Alignment.CenterStart)
                         .padding(start = 120.dp),
                     checked = party,
-                    onCheckedChange = {party = it},
+                    onCheckedChange = { party = it},
                     colors = CheckboxDefaults.colors(
                         checkedColor = BlueWhite40
                     )
@@ -607,7 +615,7 @@ fun NewMeeting(
                         .clickable { dateDialogState.show() },
                     value = formattedDate,
                     onValueChange = {
-                        okInput = checkMeetingInput(alter1, alter2, erfahrung)
+                        okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
                     },
                     placeholder = { Text(text = "Datum") },
                     enabled = false
@@ -642,7 +650,7 @@ fun NewMeeting(
                         .clickable { timeDialogState.show() },
                     value = formattedTime,
                     onValueChange = {
-                        okInput = checkMeetingInput(alter1, alter2, erfahrung)
+                        okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
                     },
                     placeholder = { Text(text = "Uhrzeit") },
                     enabled = false
@@ -686,7 +694,10 @@ fun NewMeeting(
                 singleLine = false,
                 minLines = 3,
                 value = beschreibung,
-                onValueChange = { beschreibung = it },
+                onValueChange = {
+                    beschreibung = it
+                    okInput = checkMeetingInput(alter1, alter2, erfahrung, titel, stadt, spiele, beschreibung)
+                                },
                 placeholder = { Text(text = "Beschreibung hinzufügen") },
             )
             Spacer(modifier = Modifier.height(76.dp))
@@ -735,7 +746,7 @@ fun NewMeeting(
                             println("failed to create meeting")
                         }
 
-                //updateCardList()
+                updateData()
                 navController.popBackStack()
                 navController.navigate("startScreen")
             }

@@ -117,25 +117,29 @@ fun getGameSimilarity(game1: Game, game2: Game):Int{
 
 
 //vergleicht einen Nutzer und eine gruppe und gibt ein Int als Wert für Ähnlichkeit zurück
-fun getFittingGroup(user: User, group: Group):Int{
+fun getFittingGroup(group: Group,stadt: String,alter: String,erfahrung: String,genre: List<Boolean>):Int{
 
     var similarity = 0
     var genreSimilarity = 0
 
-    if (user.stadt==group.stadt) similarity += 2
-    if (user.alter.toInt() in group.alter1.toInt()..group.alter2.toInt()) similarity += 1
-    if (user.erfahrung==group.erfahrung) similarity += 1
-    user.genre.forEachIndexed() {index,fav ->
-        if (group.genre[index]==fav){
-            similarity += 1
-            genreSimilarity += 1
+    if (group.alter1!=""&&group.alter2!=""&&group.stadt!=""&&group.erfahrung!=""&&stadt!=""&&alter!=""&&erfahrung!=""&&genre!=null){
+        if (stadt==group.stadt) similarity += 2
+        if (group.alter1.all { char -> char.isDigit()}&&group.alter2.all { char -> char.isDigit()}){
+            if (alter.toInt() in group.alter1.toInt()..group.alter2.toInt()) similarity += 1
         }
-    }
+        if (erfahrung==group.erfahrung) similarity += 1
+        genre.forEachIndexed() {index,fav ->
+            if (group.genre[index]==fav){
+                similarity += 1
+                genreSimilarity += 1
+            }
+        }
 
-    return if (similarity>=3&&genreSimilarity>=1||user.stadt==group.stadt){
-        similarity
-    }
-    else 0
+        return if (similarity>=3&&genreSimilarity>=1||stadt==group.stadt){
+            similarity
+        }
+        else 0
+    }else return 0
 }
 
 
