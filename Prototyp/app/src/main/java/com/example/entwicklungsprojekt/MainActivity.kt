@@ -7,7 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.entwicklungsprojekt.BGG.RestAPI
 import com.example.entwicklungsprojekt.ui.theme.EntwicklungsprojektTheme
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
