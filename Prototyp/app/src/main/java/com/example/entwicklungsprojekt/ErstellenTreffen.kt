@@ -164,7 +164,7 @@ fun ErstelleTreffen(navController: NavController, navigateToSpielTreffen: () -> 
                 modifier = Modifier
                     .width(290.dp)
                     .height(50.dp)
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .background(color = Gray40, shape = RoundedCornerShape(8.dp))
             ) {
                 BasicTextField(
                     value = stadt,
